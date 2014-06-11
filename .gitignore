@@ -1,6 +1,7 @@
 # OGRE media files
-*/media/*
-
+*/media/materials/textures/*
+*/media/models/*
+*/media/models/packs/*
 # Compiled Object files
 *.slo
 *.lo
