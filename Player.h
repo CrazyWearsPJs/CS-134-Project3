@@ -2,17 +2,18 @@
 #define PLAYER_H
 #include "GameEntity.h"
 #include "Projectile.h"
+#include <vector>
 class Player : public GameEntity{
 
 	private:
-
-		Player(Ogre::Entity *, Ogre::Vector3, Ogre::Vector3);
+		std::vector<Ogre::Entity *> collision(Ogre::RaySceneQuery *);
 
 	public:
+		Player(Ogre::Entity *, Ogre::Vector3, Ogre::Vector3);
 
-		Projectile * fireProjectile();
+		Projectile * fireProjectile(Ogre::SceneManager *);
 
-		void move(Ogre::RaySceneQuery * RaySceneQuery);
+		void move(Ogre::RaySceneQuery *);
 
 		~Player();
 

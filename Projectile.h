@@ -5,10 +5,10 @@
 class Projectile : public GameEntity
 {
 	private:
+		std::vector<Ogre::Entity *> collision(Ogre::RaySceneQuery *);
+	public:
 
 		Projectile(Ogre::Entity *, Ogre::Vector3, Ogre::Vector3);
-
-	public:
 
 		void move(Ogre::RaySceneQuery *);
 

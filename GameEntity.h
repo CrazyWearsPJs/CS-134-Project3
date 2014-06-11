@@ -12,8 +12,7 @@ class GameEntity {
 		Ogre::Vector3 pos;
 		Ogre::Vector3 dir;
 
-		virtual bool collisionWithPlayer(GameEntity * player) = 0;
-		virtual bool collisionWithEnemy(GameEntity * enemy) = 0;
+		virtual std::vector<Ogre::Entity *> collision(Ogre::RaySceneQuery * query) = 0;
 
 	public:
 
@@ -25,8 +24,6 @@ class GameEntity {
 		virtual void move(Ogre::RaySceneQuery * query) = 0;
 
 		virtual ~GameEntity()
-		{
-
-		}
+		{}
 };
 #endif // ENTITY_H

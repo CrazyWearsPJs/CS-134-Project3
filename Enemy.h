@@ -5,12 +5,12 @@
 
 class Enemy: public GameEntity {
 	private:
-
-		Enemy(Ogre::Entity *, Ogre::Vector3, Ogre::Vector3);
+		std::vector<Ogre::Entity *> collision(Ogre::RaySceneQuery *);
 
 	public:
+		Enemy(Ogre::Entity *, Ogre::Vector3, Ogre::Vector3);
 
-		Projectile * fireProjectile();
+		Projectile * fireProjectile(Ogre::SceneManager *);
 
 		void move(Ogre::RaySceneQuery *);
 
