@@ -1,3 +1,6 @@
+# OGRE media files
+*/media/*
+
 # Compiled Object files
 *.slo
 *.lo
