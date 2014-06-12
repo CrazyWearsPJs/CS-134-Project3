@@ -1,24 +1,39 @@
 #include "Enemy.h"
 #include "Projectile.h"
 #include <vector>
-Enemy::Enemy(Ogre::Entity * entity, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
-					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
-			:GameEntity(entity, inital_pos, inital_dir)
-{}
+#include <sstream>
 
-std::vector<Ogre::Entity *> Enemy::collision(Ogre::RaySceneQuery *)
+
+
+Enemy::Enemy(Ogre::String entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
+					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
+			:GameEntity(entity_name, inital_pos, inital_dir)
 {
-	return std::vector<Ogre::Entity *>();
+	++Enemy::id;
+}
+
+int Enemy::id = 0;
+
+Ogre::String Enemy::get_next_name()
+{
+	Ogre::StringStream ss;
+	ss << Enemy::id;
+	return "Enemy" + ss.str();
+}
+
+std::vector<Ogre::String> Enemy::collision(Ogre::RaySceneQuery *)
+{
+	return std::vector<Ogre::String>();
 }
 
 Projectile * Enemy::fireProjectile(Ogre::SceneManager * manager)
 {
-	Ogre::Entity * new_entity = 0;
+	Ogre::String new_entity_name;
 
-	return new Projectile(new_entity, this -> pos, Ogre::Vector3(1, 0, 0));
+	return new Projectile(new_entity_name, this -> pos, Ogre::Vector3(1, 0, 0));
 }
 
-void Enemy::move(Ogre::RaySceneQuery * query)
+void Enemy::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre::Camera * camera)
 {
 	return;
 }

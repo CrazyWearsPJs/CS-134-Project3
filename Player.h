@@ -6,14 +6,14 @@
 class Player : public GameEntity{
 
 	private:
-		std::vector<Ogre::Entity *> collision(Ogre::RaySceneQuery *);
+		std::vector<Ogre::String> collision(Ogre::RaySceneQuery *);
 
 	public:
-		Player(Ogre::Entity *, Ogre::Vector3, Ogre::Vector3);
+		Player(const Ogre::String &, Ogre::Vector3, Ogre::Vector3);
 
 		Projectile * fireProjectile(Ogre::SceneManager *);
 
-		void move(Ogre::RaySceneQuery *);
+		void move(Ogre::SceneManager *, Ogre::RaySceneQuery *, Ogre::SceneManager *, Ogre::Camera *);
 
 		~Player();
 

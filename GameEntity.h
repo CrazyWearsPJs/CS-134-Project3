@@ -3,25 +3,26 @@
 
 #include "BaseApplication.h"
 #include <vector>
-
+#include <string>
 class GameEntity {
 
-	protected:
+	public:
+	Ogre::String entity_name;
 
-		Ogre::Entity * entity;
+	protected:
 		Ogre::Vector3 pos;
 		Ogre::Vector3 dir;
 
-		virtual std::vector<Ogre::Entity *> collision(Ogre::RaySceneQuery * query) = 0;
+		virtual std::vector<Ogre::String> collision(Ogre::RaySceneQuery * query) = 0;
 
 	public:
 
-		GameEntity(Ogre::Entity * entity, Ogre::Vector3 inital_pos,
+		GameEntity(const Ogre::String & entity_name, Ogre::Vector3 inital_pos,
 					Ogre::Vector3 inital_dir)
-			:entity(entity), pos(inital_pos), dir(inital_dir)
+			:entity_name(entity_name), pos(inital_pos), dir(inital_dir)
 		{}
 
-		virtual void move(Ogre::RaySceneQuery * query) = 0;
+		virtual void move(Ogre::SceneManager *, Ogre::RaySceneQuery *, Ogre::Camera *) = 0;
 
 		virtual ~GameEntity()
 		{}

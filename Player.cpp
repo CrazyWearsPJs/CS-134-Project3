@@ -1,24 +1,24 @@
 #include "Player.h"
 #include "Projectile.h"
 #include <vector>
-Player::Player(Ogre::Entity * entity, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
+Player::Player(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
 					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
-			:GameEntity(entity, inital_pos, inital_dir)
+			:GameEntity(entity_name, inital_pos, inital_dir)
 {}
 
 Projectile * Player::fireProjectile(Ogre::SceneManager * manager)
 {
-	Ogre::Entity * new_entity = 0;
+	Ogre::String new_entity_name;
 
-	return new Projectile(new_entity, this -> pos, Ogre::Vector3(1, 0, 0));
+	return new Projectile(new_entity_name, this -> pos, Ogre::Vector3(1, 0, 0));
 }
 
-std::vector<Ogre::Entity *> Player::collision(Ogre::RaySceneQuery * query)
+std::vector<Ogre::String> Player::collision(Ogre::RaySceneQuery * query)
 {
-	return std::vector<Ogre::Entity *>();
+	return std::vector<Ogre::String>();
 }
 
-void Player::move(Ogre::RaySceneQuery * query)
+void Player::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre::Camera * camera)
 {
 
 }
