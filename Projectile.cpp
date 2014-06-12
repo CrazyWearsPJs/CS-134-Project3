@@ -21,7 +21,7 @@ Ogre::String Projectile::get_next_name()
 }
 
 
-void Projectile::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * RaySceneQuery, )
+void Projectile::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * RaySceneQuery, Ogre::Camera * camera)
 {
 	return;
 }

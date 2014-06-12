@@ -13,7 +13,7 @@ class Player : public GameEntity{
 
 		Projectile * fireProjectile(Ogre::SceneManager *);
 
-		void move(Ogre::SceneManager *, Ogre::RaySceneQuery *, Ogre::SceneManager *, Ogre::Camera *);
+		void move(Ogre::SceneManager *, Ogre::RaySceneQuery *, Ogre::Camera *);
 
 		~Player();
 

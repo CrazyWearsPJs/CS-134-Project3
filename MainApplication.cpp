@@ -46,7 +46,7 @@ void MainApplication::createScene(void)
     // Set the scene's ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
 
-    mEntity = mSceneMgr -> createEntity("Player", "RZR-002.mesh");
+    mSceneMgr -> createEntity("Player", "RZR-002.mesh");
 
     mHero = new Player("Player", Ogre::Vector3::ZERO, Ogre::Vector3::ZERO);
 
@@ -57,12 +57,13 @@ void MainApplication::createScene(void)
 
     Ogre::Light * light = mSceneMgr -> createLight("MainLight");
     light -> setPosition(20.0f, 80.0f, 50.0f);
-    mEntity -> setMaterialName("Test/Red");
+    mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/Red");
     cout << "Hello" << endl;
 }
 
 bool MainApplication::processUnbufferedInput(const Ogre::FrameEvent & evt)
 {
+    /*
     bool up = mKeyboard -> isKeyDown(OIS::KC_W),
          down = mKeyboard -> isKeyDown(OIS::KC_S),
          left = mKeyboard -> isKeyDown(OIS::KC_A),
@@ -71,9 +72,9 @@ bool MainApplication::processUnbufferedInput(const Ogre::FrameEvent & evt)
     if(up || down || left || right)
     {
         
-        player -> move(mQuery);
+        mPlayer -> move(mQuery);
     }
-
+    */
     return true;
 }
 
