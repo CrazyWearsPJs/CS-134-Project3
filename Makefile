@@ -8,7 +8,7 @@ OGRE_PREFIX = /usr/csshare/pkgs
 INCLUDE_PATHS = -I $(OGRE_PREFIX)/ogre-1.8.1/include/OGRE/ -I $(OGRE_PREFIX)/ois-v1-3/includes/
 LIB_PATHS = -L $(OGRE_PREFIX)/ogre-1.8.1/lib/ -L $(OGRE_PREFIX)/ogre-1.8.1/lib/OGRE/ -L $(OGRE_PREFIX)/ois-v1-3/lib/
 LIBS = -lOgreMain -lOIS
-CC = g++
+CC = g++ -ggdb -O3
 
 ## Global header files
 INCLUDE = const.h

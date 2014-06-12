@@ -76,13 +76,14 @@ void BaseApplication::chooseSceneManager(void)
 //-------------------------------------------------------------------------------------
 void BaseApplication::createCamera(void)
 {
+    Ogre::Vector3 cameraPosition = Ogre::Vector3(0, 0, 100);
     // Create the camera
     mCamera = mSceneMgr->createCamera("PlayerCam");
 
     // Position it at 500 in Z direction
-    mCamera->setPosition(Ogre::Vector3(0,300,0));
+    mCamera->setPosition(cameraPosition);
     // Look back along -Z
-    mCamera->lookAt(Ogre::Vector3(0, 0, -10));
+    mCamera->lookAt(Ogre::Vector3::ZERO);
     mCamera->setNearClipDistance(5);
 
     mCameraMan = new OgreBites::SdkCameraMan(mCamera);   // create a default camera controller
@@ -98,6 +99,8 @@ void BaseApplication::createFrameListener(void)
     mWindow->getCustomAttribute("WINDOW", &windowHnd);
     windowHndStr << windowHnd;
     pl.insert(std::make_pair(Ogre::String("WINDOW"), windowHndStr.str()));
+    pl.insert(std::make_pair(std::string("x11_mouse_grab"), std::string("false")));
+    pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
 
     mInputManager = OIS::InputManager::createInputSystem( pl );
 

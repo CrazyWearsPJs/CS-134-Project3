@@ -38,11 +38,21 @@ protected:
     virtual bool frameRenderingQueued(const Ogre::FrameEvent &);
     virtual bool processUnbufferedInput(const Ogre::FrameEvent &);
 
+    Ogre::Entity * mEntity;
+    Ogre::Entity * mEntity2;
+
+    Ogre::SceneNode * mNode;
+    Ogre::SceneNode * mNode2;
+
     Ogre::RaySceneQuery * mQuery;
 
     Player * mHero;
 
-    std::vector<GameEntity *> mEntities;
+    std::vector<Enemy *> mEnemies; 
+
+    std::vector<Projectile *> mHeroProjectiles;
+
+    std::vector<Projectile *> mEnemyProjectiles;
 };
 
 #endif

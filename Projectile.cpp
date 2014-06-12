@@ -2,8 +2,6 @@
 #include <string>
 #include <sstream>
 
-
-
 Projectile::Projectile(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
 					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
 			:GameEntity(entity_name, inital_pos, inital_dir)

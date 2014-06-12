@@ -7,15 +7,12 @@
 class GameEntity {
 
 	public:
-	Ogre::String entity_name;
-
-	protected:
+		Ogre::String entity_name;
 		Ogre::Vector3 pos;
 		Ogre::Vector3 dir;
 
 		virtual std::vector<Ogre::String> collision(Ogre::RaySceneQuery * query) = 0;
 
-	public:
 
 		GameEntity(const Ogre::String & entity_name, Ogre::Vector3 inital_pos,
 					Ogre::Vector3 inital_dir)
