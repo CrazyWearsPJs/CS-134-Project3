@@ -8,7 +8,7 @@ Player::Player(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre
 					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
 			:GameEntity(entity_name, inital_pos, inital_dir)
 {
-    pitch = Radian(Degree(0));
+    pitch = 0;
 }
 
 Projectile * Player::fireProjectile(Ogre::SceneManager * manager)
@@ -31,6 +31,16 @@ void Player::moveTo(Vector3 pos, SceneManager * manager)
 
 void Player::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre::Camera * camera)
 {
+    // Trying to move Left or Right
+    if ((dir.x > 0 && this->pos.x > 60) || (dir.x <0 && this->pos.x < -58)) {
+        dir.x = 0;
+    }
+
+    // Trying to move Up or Down
+    if ((dir.y > 0 && this->pos.y > 38) || (dir.y <0 && this->pos.y < -37)) {
+        dir.y = 0;
+    }
+
     // First normalize the direction vector
     this->dir.normalise();
 
@@ -42,16 +52,26 @@ void Player::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogr
 void Player::rotatePitch(SceneManager * manager) 
 {
     // Check y position
-    if (dir[1] > 0) {
-        if (this -> pitch < Radian(Degree(30))) {
-            this -> pitch += Radian(Degree(2));
+    if (dir.y > 0) {
+        if ((this -> pitch) < 30) {
+            this -> pitch += 2;
+            (manager -> getSceneNode(this -> entity_name + "Node")) -> pitch( Radian(Degree(-2)));
         }
-    } else if (dir[1] < 0) {
-
+    } else if (dir.y < 0) {
+        if ((this -> pitch) > -30) {
+            this -> pitch -= 2;
+            (manager -> getSceneNode(this -> entity_name + "Node")) -> pitch( Radian(Degree(2)));
+        }
     } else {// dir[1] == 0
-
+        if ((this -> pitch) > 0) {
+            this -> pitch -= 2;
+            (manager -> getSceneNode(this -> entity_name + "Node")) -> pitch( Radian(Degree(2)));
+        } else if ((this -> pitch) < 0){
+            this -> pitch += 2;
+            (manager -> getSceneNode(this -> entity_name + "Node")) -> pitch( Radian(Degree(-2)));
+            
+        }
     }
-    (manager -> getSceneNode(this -> entity_name + "Node")) -> pitch( Radian(Degree(20)));
 }
 
 Player::~Player()

@@ -10,7 +10,7 @@ class Player : public GameEntity{
 
 	private:
 		std::vector<Ogre::String> collision(Ogre::RaySceneQuery *);
-        Radian pitch;
+        int pitch;
 
 	public:
 		Player(const Ogre::String &, Ogre::Vector3, Ogre::Vector3);

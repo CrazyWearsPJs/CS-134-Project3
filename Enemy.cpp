@@ -3,7 +3,7 @@
 #include <vector>
 #include <sstream>
 
-
+using namespace Ogre;
 
 Enemy::Enemy(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
 					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
@@ -35,6 +35,9 @@ Projectile * Enemy::fireProjectile(Ogre::SceneManager * manager)
 
 void Enemy::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre::Camera * camera)
 {
+    Vector3 newPos = pos + Vector3(-0.1, 0, 0);
+    this -> pos = newPos;
+    manager -> getSceneNode(this -> entity_name + "Node") -> setPosition(newPos);
 	return;
 }
 

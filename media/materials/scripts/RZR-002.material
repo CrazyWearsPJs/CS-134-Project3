@@ -1,0 +1,57 @@
+material Test/SpaceShipCustom
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.15 0.15 0.15
+            diffuse 0.1 0.1 0.1
+            emissive 0 0 0
+            specular 0 0 0 0
+
+            texture_unit
+            {
+                texture spaceship2.jpg
+                colour_op_ex add src_texture src_current
+				colour_op_multipass_fallback one one
+				env_map off
+            }
+        }
+    }
+}
+
+material Test/SpaceShipProjectile
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.2 0.2 0.2
+            diffuse 0 0 0
+            emissive 0 0 0
+            specular 0 0 0 0
+
+            texture_unit
+            {
+                texture bullet.jpeg
+                colour_op_ex add src_texture src_current
+				colour_op_multipass_fallback one one
+				env_map off
+            }
+        }
+    }
+}
+
+material Test/Red
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.5 0.1 0.1
+            diffuse 0.9 0.1 0.1
+            emissive 0.3 0.1 0
+        }
+    }
+}
+

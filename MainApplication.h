@@ -38,6 +38,10 @@ protected:
     virtual bool frameRenderingQueued(const Ogre::FrameEvent &);
     virtual bool processUnbufferedInput(const Ogre::FrameEvent &);
 
+    // OIS::KeyListener
+    virtual bool keyPressed( const OIS:: KeyEvent& evt);
+    virtual bool keyReleased( const OIS:: KeyEvent& evt);
+
     Ogre::Entity * mEntity;
     Ogre::Entity * mEntity2;
 
@@ -45,6 +49,11 @@ protected:
     Ogre::SceneNode * mNode2;
 
     Ogre::RaySceneQuery * mQuery;
+
+    void processEnemy();
+    void spawnEnemy(Vector3);
+
+    void collisionDetection();
 
     Player * mHero;
 
@@ -56,3 +65,4 @@ protected:
 };
 
 #endif
+

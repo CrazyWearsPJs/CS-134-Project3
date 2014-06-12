@@ -82,6 +82,9 @@ protected:
     Ogre::String mResourcesCfg;
     Ogre::String mPluginsCfg;
 
+    // Background rectangle
+    Ogre::Rectangle2D* rect;
+
     // OgreBites
     OgreBites::SdkTrayManager* mTrayMgr;
     OgreBites::SdkCameraMan* mCameraMan;     // basic camera controller
