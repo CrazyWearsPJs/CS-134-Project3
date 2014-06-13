@@ -18,15 +18,23 @@ material Ogre/Earring
 	}
 }
 
-material Test/Red
+material Test/Bloody
 {
     technique
     {
         pass
         {
-            ambient 0.5 0.1 0.1
-            diffuse 0.9 0.1 0.1
-            emissive 0.3 0.1 0
+            ambient 0 0 0
+            diffuse 0 0 0
+            emissive 0 0 0
+
+			texture_unit
+			{
+				texture bloody.jpg
+				colour_op_ex add src_texture src_current
+				colour_op_multipass_fallback one one
+				env_map spherical
+			}
         }
     }
 }
@@ -50,10 +58,17 @@ material Test/Yellow
     {
         pass 
         {
-            ambient 0 0.8 1
-            diffuse 1 1 1
-            emissive 0 0.5 0
-        
+            ambient 0.1 0.1 0
+            diffuse 0.1 0.1 0.1
+            emissive 0 0 0
+
+			texture_unit
+			{
+				texture yellow.jpeg
+				colour_op_ex add src_texture src_current
+				colour_op_multipass_fallback one one
+				env_map spherical
+			}
         }
     }
 }
@@ -65,8 +80,16 @@ material Test/Purple
         pass
         {
             ambient 0.5 0 1
-            diffuse 1 1 1
-            emissive 0 0.5 0
+            diffuse 0 0 0
+            emissive 0.4 0.4 0.4
+
+            texture_unit
+			{
+				texture shiny.jpg
+				colour_op_ex add src_texture src_current
+				colour_op_multipass_fallback one one
+				env_map spherical
+			}
         }
     }
 }

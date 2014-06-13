@@ -13,8 +13,13 @@ class Enemy: public GameEntity {
         enemy_type type;
         Vector3 center;
         int life;
+        bool outOfBounds;
     public:
 		Enemy(const Ogre::String &, Ogre::Vector3, Ogre::Vector3, Ogre::Vector3, enemy_type, int);
+
+        void setOutOfBounds();
+
+        bool isOutOfBounds();
 
         int getShot();
 

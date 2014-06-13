@@ -251,7 +251,7 @@ bool BaseApplication::setup(void)
 
     // Background here
     MaterialPtr material = MaterialManager::getSingleton().create("Background", "General");
-    material->getTechnique(0)->getPass(0)->createTextureUnitState("space.jpg");
+    material->getTechnique(0)->getPass(0)->createTextureUnitState("space.gif");
     material->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
     material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
     material->getTechnique(0)->getPass(0)->setLightingEnabled(false);

@@ -31,6 +31,7 @@ using namespace Ogre;
 //-------------------------------------------------------------------------------------
 MainApplication::MainApplication(void)
 {
+    mLevel = 1;
     srand(time(0));
 }
 //-------------------------------------------------------------------------------------
@@ -137,7 +138,7 @@ void MainApplication::reset(){
   
 
 // Add enemy type later
-void MainApplication::spawnEnemy(Vector3 pos, Vector3 center, Vector3 dir = Vector3(-0.3,0,0), enemy_type type = STRAIGHT) {
+Enemy * MainApplication::spawnEnemy(Vector3 pos, Vector3 center, Vector3 dir = Vector3(-0.3,0,0), enemy_type type = STRAIGHT, int life = 2) {
     static int enemyNumber = 0;
     char buffer[256];
     Enemy* newEnemySpawn;
@@ -145,7 +146,7 @@ void MainApplication::spawnEnemy(Vector3 pos, Vector3 center, Vector3 dir = Vect
     sprintf(buffer, "Enemy%i", enemyNumber++);
     mSceneMgr -> createEntity(buffer, "ogrehead.mesh");
     
-    newEnemySpawn = new Enemy(buffer, pos, center, dir, type, 3);
+    newEnemySpawn = new Enemy(buffer, pos, center, dir, type, life);
 
     mSceneMgr -> getRootSceneNode() -> createChildSceneNode(newEnemySpawn -> entity_name + "Node", newEnemySpawn->pos);
 
@@ -157,7 +158,8 @@ void MainApplication::spawnEnemy(Vector3 pos, Vector3 center, Vector3 dir = Vect
     mSceneMgr -> getSceneNode(newEnemySpawn -> entity_name + "Node") -> yaw(Degree(-90));
 
     mSceneMgr -> getSceneNode(newEnemySpawn -> entity_name + "Node") -> scale(0.2, 0.2, 0.2);
-//    Enemy* newEnemySpawn = new Enemy("
+
+    return newEnemySpawn;
 }
 
 void MainApplication::spawnItem(Vector3 pos, item_type type)
@@ -197,6 +199,7 @@ void MainApplication::spawnItem(Vector3 pos, item_type type)
     mSceneMgr -> getSceneNode(newItemSpawn -> entity_name + "Node") -> scale(Vector3(2.0, 2.0, 2.0));
     mItems.push_back(newItemSpawn);
 }
+
 void MainApplication::spawnWall(Vector3 pos)
 {
     static int wallNumber = 0;
@@ -215,25 +218,74 @@ void MainApplication::spawnWall(Vector3 pos)
 
     mSceneMgr -> getSceneNode(newWallSpawn -> entity_name + "Node") -> scale(Vector3(0.1, 0.1, 0.1));
     mWalls.push_back(newWallSpawn);
-}
 
+    mSceneMgr -> getEntity(newWallSpawn -> entity_name) -> setMaterialName("column");
+}
 void MainApplication::processEnemy() { 
-    const static double xSpawn = 50;
+    const static double xSpawn = 60;
 
     // Easy Level Design
-   
-   
-    if(timer == 0) { spawnWall(Vector3(xSpawn, 0, 0)); } 
-    if(timer == 0)   { spawnEnemy(Vector3(10, 25, 0), Vector3(0, 0, 0),Vector3(-0.3,0,0), SINE);}
-    //if(timer == 0) { spawnEnemy(Vector3(xSpawn, 0, 0 ), Vector3()); }
-    if(timer == 100) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT); }
-    if(timer == 100) { spawnEnemy(Vector3(xSpawn - 10, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT);}
-    if(timer == 400) { spawnEnemy(Vector3(xSpawn, -25, 0), Vector3(0, 0, 0), Vector3(-0.5, 0 ,0), TRACKER); }
+    if(mLevel == 1)
+    {  
+        if(timer == 0) { spawnWall(Vector3(xSpawn, 10, 0)); } 
+        if(timer == 100) {spawnWall(Vector3(xSpawn, -30, 0)); }
+        if(timer == 0) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT, 3); }
+        //if(timer == 0)   { spawnEnemy(Vector3(10, 25, 0), Vector3(0, 0, 0),Vector3(-0.3,0,0), SINE);}
+        if(timer == 400) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT); }
+        if(timer == 900) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), SINE, 3);} 
+        if(timer == 1000) {spawnWall(Vector3(xSpawn, 20, 0));}
+        
+        if(timer == 1500){
+            Enemy * boss = spawnEnemy(Vector3(xSpawn, -25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0 ,0), TRACKER, 5);
+            mSceneMgr -> getSceneNode(boss -> entity_name + "Node") -> scale(Vector3(2.0, 2.0, 2.0));          
+        }
+        if(timer == 2000) {spawnWall(Vector3(xSpawn, 10, 0));}
+        if(timer == 2200) {spawnWall(Vector3(xSpawn, -30, 0));} 
+        if(timer >= 1500 && mEnemies.empty()) {
+            mLevel = 2; 
+            timer = -1;
+        }
+    }
+    else if(mLevel == 2)
+    {
+        if(timer == 0) { spawnWall(Vector3(xSpawn, 10, 0)); } 
+        if(timer == 75) {spawnWall(Vector3(xSpawn, -30, 0)); }
+        if(timer == 150) { spawnWall(Vector3(xSpawn, 10, 0)); } 
+        if(timer == 150) { spawnWall(Vector3(xSpawn, -40, 0)); }
+        if(timer == 200) {spawnWall(Vector3(xSpawn, 10, 0)); }
+        if(timer == 200) { spawnWall(Vector3(xSpawn, -40, 0)); }
+        if(timer == 300) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-3.0, 0,0), STRAIGHT, 1); }
+        if(timer == 300) { spawnEnemy(Vector3(xSpawn, 0, 0), Vector3(0, 0, 0), Vector3(-3.0, 0,0), STRAIGHT, 1); }
+        if(timer == 300) { spawnEnemy(Vector3(xSpawn, -25, 0), Vector3(0, 0, 0), Vector3(-3.0, 0,0), STRAIGHT, 1); }
+        if(timer == 600) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-1.0, 0,0), SINE, 4);}  
+        if(timer == 600) { spawnEnemy(Vector3(xSpawn, -25, 0), Vector3(0, 0, 0), Vector3(-1.0, 0,0), SINE, 4);}
+        if(timer == 1000) {spawnWall(Vector3(xSpawn, -30, 0)); }   
+        if(timer == 1100) {spawnWall(Vector3(xSpawn, -30, 0)); }
+        if(timer == 1500) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.5, 0,0), TRACKER, 6);}  
+        if(timer == 2000) { spawnEnemy(Vector3(xSpawn, 20, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT, 2);}
+        if(timer == 2000) { spawnEnemy(Vector3(xSpawn, 10, 0), Vector3(0, 0, 0), Vector3(-0.5, 0,0), STRAIGHT, 2);}
+        if(timer == 2000) { spawnEnemy(Vector3(xSpawn, 0, 0), Vector3(0, 0, 0), Vector3(-0.9, 0,0), STRAIGHT, 2);}
+        if(timer == 2000) { spawnEnemy(Vector3(xSpawn, -10, 0), Vector3(0, 0, 0), Vector3(-0.5, 0,0), STRAIGHT, 2);}
+        if(timer == 2000) { spawnEnemy(Vector3(xSpawn, -20, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT, 2);}
+        if(timer == 2200) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.8, 0,0), SINE, 2);}
+        if(timer == 2200) { spawnEnemy(Vector3(xSpawn, -25, 0), Vector3(0, 0, 0), Vector3(-0.8, 0,0), SINE, 2);}
+        if(timer == 3000) { spawnEnemy(Vector3(xSpawn, 20, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT, 2);}
+        if(timer == 3000) { spawnEnemy(Vector3(xSpawn, 10, 0), Vector3(0, 0, 0), Vector3(-0.5, 0,0), STRAIGHT, 2);}
+        if(timer == 3000) { spawnEnemy(Vector3(xSpawn, 0, 0), Vector3(0, 0, 0), Vector3(-0.9, 0,0), STRAIGHT, 2);}
+        if(timer == 3000) { spawnEnemy(Vector3(xSpawn, -10, 0), Vector3(0, 0, 0), Vector3(-0.5, 0,0), STRAIGHT, 2);}
+        if(timer == 3000) { spawnEnemy(Vector3(xSpawn, -20, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT, 2);}
+        if(timer == 3200) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.8, 0,0), SINE, 2);}
+        if(timer == 3200) { spawnEnemy(Vector3(xSpawn, -25, 0), Vector3(0, 0, 0), Vector3(-0.8, 0,0), SINE, 2);}
+        if(timer >= 5000 && mEnemies.empty())
+        {
+            timer = 0;
+        }
+    }
+    
     ++timer;
 
     // Make Enemies Move
     for (int i=0; i<mEnemies.size(); ++i) {
-        mEnemies[i] -> dir = Vector3(-0.1, 0.0, 0.0);
         mEnemies[i] -> move(mSceneMgr, mQuery, mCamera, mHero->pos);
     }
 }
@@ -282,7 +334,7 @@ void MainApplication::collisionDetectionPlayerEnemyHelper(Vector3 rayPos) {
                     cout << "I collided with: " << nameOfCollidedObject << endl;
                     mHero -> getShot();
                     // Collision found between my Player and an enemy
-                    mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/Red");
+                    mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/Bloody");
                 }
             }
        
@@ -304,7 +356,7 @@ void MainApplication::collisionDetectionPlayerWallHelper(Vector3 rayPos) {
                     cout << "I collided with: " << nameOfCollidedObject << endl;
                     mHero -> getShot();
                     // Collision found between my Player and an enemy
-                    mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/Red");
+                    mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/Bloody");
                 }
             }
        
@@ -326,6 +378,9 @@ void MainApplication::collisionDetectionPlayerItemHelper(Vector3 rayPos) {
                 if (mItems[j]->entity_name == nameOfCollidedObject) {
                     mItems[j]->effect(mHero);
                     mItems[j]->obtainItem();
+                    if (mItems[j]-> type == THREE_GUNS) {
+                        mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/SpaceShipInvincible");
+                    }
                     cout << "I collided with: " << nameOfCollidedObject << endl;
                 }
             }
@@ -443,6 +498,10 @@ void MainApplication::cleanUpEnemies() {
             mHero -> collectCoin(); 
             destroyGameEntity(mEnemies[i]);
         }
+        else if(mEnemies[i] ->isOutOfBounds())
+        {
+            destroyGameEntity(mEnemies[i]);
+        }
         else
         {
             alive_enemies.push_back(mEnemies[i]);
@@ -512,11 +571,15 @@ void MainApplication::collisionDetectionProjectile() {
             String nameOfCollidedObject = rsqrit->movable->getName();
             for (int j = 0; j<mEnemies.size(); ++j) {
                 if (mEnemies[j]->entity_name == nameOfCollidedObject) {
-                    mEnemies[j]->getShot();
+                    int health = mEnemies[j]->getShot();
                     mHeroProjectiles[i]->is_used = true;
                     cout << "I collided with: " << nameOfCollidedObject << endl;
-                    // Collision found between my bullet and an enemy
-                    mSceneMgr -> getEntity(mEnemies[j] -> entity_name) -> setMaterialName("Test/Red");
+                    // Collision found between my bullet and an enemy detected
+                    if (health == 2) {
+                        mSceneMgr -> getEntity(mEnemies[j] -> entity_name) -> setMaterialName("Test/Yellow");
+                    } else if (health == 1) {
+                        mSceneMgr -> getEntity(mEnemies[j] -> entity_name) -> setMaterialName("Test/Bloody");
+                    }
                     //mSceneMgr -> getEntity(mEnemies[j] -> entity_name) -> setVisible(false);
 
                 }
@@ -714,14 +777,13 @@ bool MainApplication::frameRenderingQueued(const Ogre::FrameEvent & evt)
    
 
     char buffer[256];
-    sprintf(buffer, "Score: %i", mHero->getCoins());
+    sprintf(buffer, "Level %i | Score: %i", mLevel, mHero->getCoins());
     lb -> setCaption(buffer);
 
     if(mHero -> isDead())
     {
         reset();
     }
-
     return ret;
 }
 

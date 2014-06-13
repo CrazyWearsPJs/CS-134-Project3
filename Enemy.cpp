@@ -12,10 +12,19 @@ Enemy::Enemy(const  Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre:
 					                            Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO, 
                                                 enemy_type type = STRAIGHT,
                                                 int life = 3)
-			:GameEntity(entity_name, inital_pos,  inital_dir), type(type), center(inital_center), life(life) 
+			:GameEntity(entity_name, inital_pos,  inital_dir), type(type), center(inital_center), life(life), outOfBounds(false)
 {
     vel = Vector3::ZERO;
 	++Enemy::id;
+}
+void Enemy::setOutOfBounds()
+{
+    outOfBounds = true;
+}
+
+bool Enemy::isOutOfBounds()
+{
+    return outOfBounds;
 }
 
 int Enemy::getShot() {
@@ -71,6 +80,8 @@ void Enemy::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre
     newPos = pos + vel + dir;
     this -> pos = newPos;
     manager -> getSceneNode(this -> entity_name + "Node") -> setPosition(newPos);
+
+    if(this -> pos.x <= -100) setOutOfBounds();
 
     /*
     Vector3 newPos = pos + dir;

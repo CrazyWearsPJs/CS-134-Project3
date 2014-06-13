@@ -37,6 +37,8 @@ protected:
 
     long long timer;
 
+    int mLevel;
+
 
     virtual void createScene(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent &);
@@ -55,7 +57,7 @@ protected:
     Ogre::RaySceneQuery * mQuery;
 
     void processEnemy();
-    void spawnEnemy(Vector3, Vector3, Vector3, enemy_type);
+    Enemy * spawnEnemy(Vector3, Vector3, Vector3, enemy_type, int);
 
     void setupPlayer();
 
