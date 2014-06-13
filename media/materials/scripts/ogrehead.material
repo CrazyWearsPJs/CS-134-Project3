@@ -31,6 +31,46 @@ material Test/Red
     }
 }
 
+material Test/Blue
+{
+    technique
+    {
+        pass
+        {
+            ambient 0 0 1
+            diffuse 0 0.5 0
+            emissive 0 0 0
+        }
+    }
+}
+
+material Test/Yellow
+{
+    technique
+    {
+        pass 
+        {
+            ambient 0 0.8 1
+            diffuse 1 1 1
+            emissive 0 0.5 0
+        
+        }
+    }
+}
+
+material Test/Purple
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.5 0 1
+            diffuse 1 1 1
+            emissive 0 0.5 0
+        }
+    }
+}
+
 material Ogre/Skin
 {
 	technique

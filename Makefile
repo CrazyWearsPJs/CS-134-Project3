@@ -20,23 +20,26 @@ PLAYER_OUT = Player.o
 ENEMY_OUT = Enemy.o
 ITEM_OUT = Item.o
 PROJECTILE_OUT = Projectile.o
+WALL_OUT = Wall.o
 
 ## Requirements for each command
-MAIN_REQS = MainApplication.cpp $(BASE_APPLICATION_OUT) $(PROJECTILE_OUT) $(PLAYER_OUT) $(ENEMY_OUT) $(ITEM_OUT)
+MAIN_REQS = MainApplication.cpp $(BASE_APPLICATION_OUT) $(PROJECTILE_OUT) $(PLAYER_OUT) $(ENEMY_OUT) $(ITEM_OUT) $(WALL_OUT)
 BASE_APPLICATION_REQS = BaseApplication.h BaseApplication.cpp
 PLAYER_REQS = GameEntity.h $(PROJECTILE_OUT) Player.h Player.cpp
 ENEMY_REQS = GameEntity.h $(PROJECTILE_OUT) Enemy.h Enemy.cpp
 ITEM_REQS = GameEntity.h Item.h Item.cpp
 PROJECTILE_REQS = GameEntity.h Projectile.h Projectile.cpp
-
+Wall_REQS = GameEntity.h Wall.h Wall.cpp
 
 ## Targets to compile for each command
-MAIN_TARGETS = MainApplication.cpp $(BASE_APPLICATION_OUT) $(PROJECTILE_OUT) $(PLAYER_OUT) $(ENEMY_OUT)
+MAIN_TARGETS = MainApplication.cpp $(BASE_APPLICATION_OUT) $(PROJECTILE_OUT) $(PLAYER_OUT) $(ENEMY_OUT) $(ITEM_OUT) $(WALL_OUT)
 BASE_APPLICATION_TARGETS = BaseApplication.cpp
 PLAYER_TARGETS = Player.cpp
 ENEMY_TARGETS = Enemy.cpp
 ITEM_TARGETS = Item.cpp
 PROJECTILE_TARGETS = Projectile.cpp
+WALL_TARGETS = Wall.cpp
+
 
 all: main
 
@@ -53,5 +56,7 @@ $(PROJECTILE_OUT): $(PROJECTILE_REQS) $(INCLUDE)
 	$(CC) -c $(INCLUDE_PATHS) $(PROJECTILE_TARGETS) -o $(PROJECTILE_OUT)
 $(ITEM_OUT): $(ITEM_REQS) $(INCLUDE)
 	$(CC) -c $(INCLUDE_PATHS) $(ITEM_TARGETS) -o $(ITEM_OUT)
+$(WALL_OUT): $(WALL_REQS) $(INCLUDE)
+	$(CC) -c $(INCLUDE_PATHS) $(WALL_TARGETS) -o $(WALL_OUT)
 clean:
 	rm -f *~ *.o *.out

@@ -28,7 +28,7 @@ void Projectile::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * RaySce
     //Vector3 newPos = this -> pos + Vector3(player_projectile_speed, 0, 0);
     this -> pos = newPos;
     manager -> getSceneNode(this -> entity_name + "Node") -> setPosition(newPos);
-	if(this -> pos.x > 60) is_used = true;
+	if(this -> pos.x > 100) is_used = true;
     return;
 }
 
