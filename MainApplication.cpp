@@ -213,7 +213,7 @@ void MainApplication::spawnWall(Vector3 pos)
     mSceneMgr -> getRootSceneNode() -> createChildSceneNode(newWallSpawn -> entity_name + "Node", newWallSpawn->pos);
     mSceneMgr -> getSceneNode(newWallSpawn->entity_name + "Node") -> attachObject(e);
 
-    mSceneMgr -> getSceneNode(newWallSpawn -> entity_name + "Node") -> scale(Vector3(1.0, 1.0, 1.0));
+    mSceneMgr -> getSceneNode(newWallSpawn -> entity_name + "Node") -> scale(Vector3(0.1, 0.1, 0.1));
     mWalls.push_back(newWallSpawn);
 }
 
@@ -221,7 +221,9 @@ void MainApplication::processEnemy() {
     const static double xSpawn = 50;
 
     // Easy Level Design
-    
+   
+   
+    if(timer == 0) { spawnWall(Vector3(xSpawn, 0, 0)); } 
     if(timer == 0)   { spawnEnemy(Vector3(10, 25, 0), Vector3(0, 0, 0),Vector3(-0.3,0,0), SINE);}
     //if(timer == 0) { spawnEnemy(Vector3(xSpawn, 0, 0 ), Vector3()); }
     if(timer == 100) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT); }
@@ -381,30 +383,6 @@ void MainApplication::collisionDetectionPlayerWall(){
    rayPos.x = mHero -> pos.x - 6;
 
    collisionDetectionPlayerWallHelper(rayPos); 
-
-   rayPos.x = mHero -> pos.y + 1;
-
-   collisionDetectionPlayerWallHelper(rayPos);
-
-   rayPos.x = mHero -> pos.y - 1;
-
-   collisionDetectionPlayerWallHelper(rayPos); 
-
-   rayPos.x = mHero -> pos.x + 4;
-
-   collisionDetectionPlayerWallHelper(rayPos);
-
-   rayPos.x = mHero -> pos.x - 4;
-
-   collisionDetectionPlayerWallHelper(rayPos);
-   
-   rayPos.x = mHero -> pos.x + 2;
-
-   collisionDetectionPlayerWallHelper(rayPos);
-
-   rayPos.x = mHero -> pos.x - 2;
-
-   collisionDetectionPlayerWallHelper(rayPos);  
 }
 
 void MainApplication::cleanUpItems() {
@@ -426,8 +404,8 @@ void MainApplication::cleanUpItems() {
 
 void MainApplication::spawnItemRandomly(Vector3 pos)
 {
-    int item_s = 0; //rand() % 3;
-    int item_t = 0;//rand() % 4;
+    int item_s = rand() % 2;
+    int item_t = rand() % 4;
     item_type type = COIN;
 
     if(item_s != 0)
@@ -462,6 +440,7 @@ void MainApplication::cleanUpEnemies() {
         if(mEnemies[i]->isDead())
         {
             spawnItemRandomly(mEnemies[i] -> pos);
+            mHero -> collectCoin(); 
             destroyGameEntity(mEnemies[i]);
         }
         else
@@ -727,13 +706,22 @@ bool MainApplication::frameRenderingQueued(const Ogre::FrameEvent & evt)
     collisionDetectionProjectile();
     collisionDetectionPlayerEnemy();
     collisionDetectionPlayerItem(); 
+    collisionDetectionPlayerWall();
     cleanUpProjectiles();
     cleanUpItems();
+    cleanUpWalls();
     cleanUpEnemies();
+   
+
+    char buffer[256];
+    sprintf(buffer, "Score: %i", mHero->getCoins());
+    lb -> setCaption(buffer);
+
     if(mHero -> isDead())
     {
         reset();
     }
+
     return ret;
 }
 

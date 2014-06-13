@@ -8,6 +8,7 @@ Player::Player(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre
 					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
 			:GameEntity(entity_name, inital_pos, inital_dir), alive(true)
 {
+    coins_collected = 0;
     pitch = 0;
     shot_rate = default_shot_rate;
     projectile_speed = default_projectile_speed;

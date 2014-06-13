@@ -282,8 +282,8 @@ bool BaseApplication::setup(void)
     //Button* b = mTrayMgr->createButton(TL_TOPLEFT, "MyButton", "Click Me!");
     //TextBox* tb = mTrayMgr->createTextBox(TL_TOP, "MyTextBox", "Hello world!!", 300, 100);
     //tb -> create
-    Label* lb = mTrayMgr->createLabel(TL_TOP, "MyLabel", "Score is: 0", 200);
-    lb -> setCaption("Score is garbage");
+    //Label* lb = mTrayMgr->createLabel(TL_TOP, "MyLabel", "Score is: 0", 200);
+    lb = mTrayMgr->createLabel(TL_TOP, "MyLabel", "Score is: 0", 200);
     //Label* tb = mTrayMgr->createLabel(TL_TOP, "MyLabel", "Hello world!!");
 
     return true;

@@ -82,6 +82,8 @@ protected:
     Ogre::String mResourcesCfg;
     Ogre::String mPluginsCfg;
 
+    OgreBites::Label* lb;
+
     // Background rectangle
     Ogre::Rectangle2D* rect;
 
