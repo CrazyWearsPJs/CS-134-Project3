@@ -2,14 +2,28 @@
 #include "Projectile.h"
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 using namespace Ogre;
 
-Enemy::Enemy(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
-					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
-			:GameEntity(entity_name, inital_pos, inital_dir)
+
+Enemy::Enemy(const  Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO, 
+                                                Ogre::Vector3 inital_center = Ogre::Vector3::ZERO,
+					                            Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO, 
+                                                enemy_type type = STRAIGHT,
+                                                int life = 3)
+			:GameEntity(entity_name, inital_pos,  inital_dir), type(type), center(inital_center), life(life) 
 {
+    vel = Vector3::ZERO;
 	++Enemy::id;
+}
+
+int Enemy::getShot() {
+    return --life;
+}
+
+bool Enemy::isDead() {
+    return life <= 0;
 }
 
 int Enemy::id = 0;
@@ -33,12 +47,36 @@ Projectile * Enemy::fireProjectile(Ogre::SceneManager * manager)
 	return new Projectile(new_entity_name, this -> pos, Ogre::Vector3(1, 0, 0));
 }
 
-void Enemy::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre::Camera * camera)
+void Enemy::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre::Camera * camera, Vector3 playerPos)
 {
-    Vector3 newPos = pos + Vector3(-0.1, 0, 0);
+    Vector3 newPos(0,0,0);
+    Vector3 acc(0,0,0);
+    if (type == STRAIGHT) {
+        newPos = pos + dir;
+    } else if (type == SINE) {
+        (this->vel).y -= 0.0008 * (this->pos.y - this->center.y);
+        newPos = pos + vel + dir;
+    } else if (type == TRACKER) {
+        acc = playerPos - this->pos;
+        acc.normalise();
+        //acc = (playerPos - this->pos).normalise();
+        if (this->vel.length() > 0.7) {
+            vel.normalise();
+            vel *= 0.7;
+        }
+        (this->vel) += acc * 0.03;
+    }
+
+    // The actual movement, same for all
+    newPos = pos + vel + dir;
     this -> pos = newPos;
     manager -> getSceneNode(this -> entity_name + "Node") -> setPosition(newPos);
+
+    /*
+    Vector3 newPos = pos + dir;
+    this -> pos = newPos;
 	return;
+    */
 }
 
 Enemy::~Enemy()

@@ -43,8 +43,18 @@ void MainApplication::createScene(void)
 
     mRoot -> addFrameListener(this);
 
-
+    setupPlayer();
     // Set the scene's ambient light
+        
+    Ogre::Light * light = mSceneMgr -> createLight("MainLight");
+   
+    light -> setPosition(20.0f, 80.0f, 50.0f);
+    
+}
+
+void MainApplication::setupPlayer()
+{
+    timer = 0;
     mSceneMgr->setAmbientLight(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
 
     mSceneMgr -> createEntity("Player", "RZR-002.mesh");
@@ -53,20 +63,39 @@ void MainApplication::createScene(void)
 
     // Create a SceneNode and attach the Entity to it
     mSceneMgr -> getRootSceneNode() -> createChildSceneNode(mHero -> entity_name + "Node", Ogre::Vector3(0.0f, 0.0f, 0.0f));
-    mSceneMgr -> getSceneNode(mHero -> entity_name + "Node") -> attachObject(mSceneMgr -> getEntity(mHero -> entity_name));
 
-    
     SceneNode * player = mSceneMgr -> getSceneNode(mHero -> entity_name + "Node");
+
+    player -> attachObject(mSceneMgr -> getEntity(mHero -> entity_name));
         
-    Ogre::Light * light = mSceneMgr -> createLight("MainLight");
-    
+        
     player -> yaw(Ogre::Degree(90));
     player -> scale(Vector3(0.5, 0.5, 0.5));
     mHero -> moveTo(Vector3(-30, 0, 0), mSceneMgr);
-        
-    light -> setPosition(20.0f, 80.0f, 50.0f);
     mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/SpaceShipCustom");
 
+}
+
+void MainApplication::destroyEntities(){
+    destroyGameEntity(mHero);
+    mHero = 0;
+    
+    for(int i = 0; i < mHeroProjectiles.size(); ++i)
+    {
+        destroyGameEntity(mHeroProjectiles[i]);
+    }
+    mHeroProjectiles.clear();
+    
+    for(int i = 0; i < mEnemies.size(); ++i)
+    {
+        destroyGameEntity(mEnemies[i]);
+    }
+    mEnemies.clear();
+}
+
+void MainApplication::reset(){
+    destroyEntities();
+    setupPlayer();
 }
 
 /*
@@ -92,15 +121,15 @@ void MainApplication::createScene(void)
 */
   
 
-// Add enemy type later?
-void MainApplication::spawnEnemy(Vector3 pos) {
+// Add enemy type later
+void MainApplication::spawnEnemy(Vector3 pos, Vector3 center, Vector3 dir = Vector3(-0.3,0,0), enemy_type type = STRAIGHT) {
     static int enemyNumber = 0;
     char buffer[256];
     Enemy* newEnemySpawn;
 
     sprintf(buffer, "Enemy%i", enemyNumber++);
     mSceneMgr -> createEntity(buffer, "ogrehead.mesh");
-    newEnemySpawn = new Enemy(buffer, pos, Vector3());
+    newEnemySpawn = new Enemy(buffer, pos, center, dir, type, 3);
 
     mSceneMgr -> getRootSceneNode() -> createChildSceneNode(newEnemySpawn -> entity_name + "Node", newEnemySpawn->pos);
     mSceneMgr -> getSceneNode(newEnemySpawn -> entity_name + "Node") -> attachObject(mSceneMgr -> getEntity(newEnemySpawn -> entity_name));
@@ -114,24 +143,126 @@ void MainApplication::spawnEnemy(Vector3 pos) {
 //    Enemy* newEnemySpawn = new Enemy("
 }
 
-void MainApplication::processEnemy() {
-    static long long timer = 0;
+
+void MainApplication::processEnemy() { 
     const static double xSpawn = 50;
 
     // Easy Level Design
-    if(timer == 0) { spawnEnemy(Vector3(xSpawn, 0, 0)); }
-    if(timer == 100) { spawnEnemy(Vector3(xSpawn, 25, 0)); }
-    if(timer == 400) { spawnEnemy(Vector3(xSpawn, -25, 0)); }
-
+    
+    if(timer == 0)   { spawnEnemy(Vector3(10, 25, 0), Vector3(0, 0, 0),Vector3(-0.3,0,0), SINE);}
+    //if(timer == 0) { spawnEnemy(Vector3(xSpawn, 0, 0 ), Vector3()); }
+    if(timer == 100) { spawnEnemy(Vector3(xSpawn, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT); }
+    if(timer == 100) { spawnEnemy(Vector3(xSpawn - 10, 25, 0), Vector3(0, 0, 0), Vector3(-0.3, 0,0), STRAIGHT);}
+    if(timer == 400) { spawnEnemy(Vector3(xSpawn, -25, 0), Vector3(0, 0, 0), Vector3(-0.5, 0 ,0), TRACKER); }
     ++timer;
 
     // Make Enemies Move
     for (int i=0; i<mEnemies.size(); ++i) {
-        mEnemies[i] -> move(mSceneMgr, mQuery, mCamera);
+        mEnemies[i] -> dir = Vector3(-0.1, 0.0, 0.0);
+        mEnemies[i] -> move(mSceneMgr, mQuery, mCamera, mHero->pos);
     }
 }
 
-void MainApplication::collisionDetection() {
+void MainApplication::destroyGameEntity(GameEntity * p)
+{
+   Entity * _entity = mSceneMgr -> getEntity(p -> entity_name);
+   SceneNode * _node = mSceneMgr -> getSceneNode(p -> entity_name + "Node");
+   
+   if(p != 0)
+   {
+       delete p;
+   }
+   
+   if(_entity != 0 && _node != 0)
+   {
+        _node -> detachObject(_entity);
+   }
+
+   if(_entity != 0)
+   {
+        mSceneMgr -> destroyEntity(_entity);
+   }
+
+   if(_node != 0)
+   {
+        mSceneMgr -> destroySceneNode(_node);
+   }
+}
+
+// bool isDead()
+// int getShot()
+
+void MainApplication::collisionDetectionPlayerEnemyHelper(Vector3 rayPos) {
+        Vector3 dirOfRay(0, 0, 1);
+        Ray myRay(rayPos, dirOfRay);
+        mQuery->setRay(myRay);
+        Ogre::RaySceneQueryResult& result = mQuery->execute();
+        Ogre::RaySceneQueryResult::iterator rsqrit = result.begin();
+        for (; rsqrit != result.end(); ++rsqrit) {
+            // Contains objects that have been collided with
+            // So just check against enemy list
+            String nameOfCollidedObject = rsqrit->movable->getName();
+            for (int j = 0; j<mEnemies.size(); ++j) {
+                if (mEnemies[j]->entity_name == nameOfCollidedObject) {
+                    cout << "I collided with: " << nameOfCollidedObject << endl;
+                    mHero -> getShot();
+                    // Collision found between my Player and an enemy
+                    mSceneMgr -> getEntity(mHero -> entity_name) -> setMaterialName("Test/Red");
+                }
+            }
+       
+    }
+}
+
+
+void MainApplication::cleanUpEnemies() {
+    std::vector<Enemy *> alive_enemies;
+    for(int i = 0; i < mEnemies.size(); ++i)
+    {
+        if(mEnemies[i]->isDead())
+        {
+            destroyGameEntity(mEnemies[i]);
+        }
+        else
+        {
+            alive_enemies.push_back(mEnemies[i]);
+        }
+    }
+
+    mEnemies = alive_enemies;
+}
+
+void MainApplication::cleanUpProjectiles() {
+    std::vector<Projectile *> unused_projectiles;
+    for(int i = 0; i < mHeroProjectiles.size(); ++i)
+    {
+        if(mHeroProjectiles[i]->is_used)
+        {
+           destroyGameEntity(mHeroProjectiles[i]);
+        }
+        else
+        {
+            unused_projectiles.push_back(mHeroProjectiles[i]);
+        }
+    }
+    mHeroProjectiles = unused_projectiles;
+}
+
+void MainApplication::collisionDetectionPlayerEnemy() {
+   Vector3 rayPos = mHero -> pos;
+
+   collisionDetectionPlayerEnemyHelper(rayPos);
+
+   rayPos.x = mHero -> pos.x + 6;
+
+   collisionDetectionPlayerEnemyHelper(rayPos);
+
+   rayPos.x = mHero -> pos.x - 6;
+
+   collisionDetectionPlayerEnemyHelper(rayPos); 
+}
+
+void MainApplication::collisionDetectionProjectile() {
     Vector3 dirOfRay(0, 0, 1);
     for (int i=0; i<mHeroProjectiles.size(); ++i) {
         Ray myRay(mHeroProjectiles[i]->pos, dirOfRay);
@@ -144,6 +275,8 @@ void MainApplication::collisionDetection() {
             String nameOfCollidedObject = rsqrit->movable->getName();
             for (int j = 0; j<mEnemies.size(); ++j) {
                 if (mEnemies[j]->entity_name == nameOfCollidedObject) {
+                    mEnemies[j]->getShot();
+                    mHeroProjectiles[i]->is_used = true;
                     cout << "I collided with: " << nameOfCollidedObject << endl;
                     // Collision found between my bullet and an enemy
                     mSceneMgr -> getEntity(mEnemies[j] -> entity_name) -> setMaterialName("Test/Red");
@@ -157,6 +290,54 @@ void MainApplication::collisionDetection() {
     // clean up
 }
 
+/*
+            //shoot
+            static int player_bullet_num = 0;
+            // It's a bullet hell.
+            char buffer[256];
+            Projectile* newHeroProjectile;
+
+            sprintf(buffer, "PlayerBullet%i", player_bullet_num++);
+            mSceneMgr -> createEntity(buffer, "RZR-002.mesh");
+
+            // Dir here
+            newHeroProjectile = new Projectile(buffer, mHero->pos, mHero->dir);
+            //mHeroProjectiles.push_back(new Projectile(buffer, mHero->pos, mHero->dir));
+
+            mSceneMgr -> getRootSceneNode() -> createChildSceneNode(newHeroProjectile -> entity_name + "Node", mHero->pos);
+            mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> attachObject(mSceneMgr -> getEntity(newHeroProjectile -> entity_name));
+
+            mHeroProjectiles.push_back(newHeroProjectile);
+            mSceneMgr -> getEntity(newHeroProjectile -> entity_name) -> setMaterialName("Test/SpaceShipProjectile");
+
+            // TODO rotating the bullet
+            mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> yaw(Degree(90));
+            mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> scale(0.5, 0.5, 0.5);
+
+            // Now Set the next shot up
+            shooting_timer = mHero -> getShotRate();
+*/
+void MainApplication::createHeroProjectile(Vector3 pos, Vector3 dir, Degree pitch) {
+    static int player_bullet_num = 0;
+    char buffer[256];
+    Projectile* newHeroProjectile;
+
+    sprintf(buffer, "PlayerBullet%i", player_bullet_num++);
+    mSceneMgr -> createEntity(buffer, "RZR-002.mesh");
+
+    newHeroProjectile = new Projectile(buffer, pos, dir);
+
+    mSceneMgr -> getRootSceneNode() -> createChildSceneNode(newHeroProjectile -> entity_name + "Node", mHero->pos);
+    mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> attachObject(mSceneMgr -> getEntity(newHeroProjectile -> entity_name));
+
+    mHeroProjectiles.push_back(newHeroProjectile);
+    mSceneMgr -> getEntity(newHeroProjectile -> entity_name) -> setMaterialName("Test/SpaceShipProjectile");
+
+    mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> yaw(Degree(90));
+    mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> pitch(pitch);
+    mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> scale(0.5, 0.5, 0.5);
+}
+
 bool MainApplication::processUnbufferedInput(const Ogre::FrameEvent & evt)
 {
     bool up =   mKeyboard -> isKeyDown(OIS::KC_W) ||
@@ -167,6 +348,31 @@ bool MainApplication::processUnbufferedInput(const Ogre::FrameEvent & evt)
                 mKeyboard -> isKeyDown(OIS::KC_LEFT),
          right = mKeyboard -> isKeyDown(OIS::KC_D) ||
                 mKeyboard -> isKeyDown(OIS::KC_RIGHT);
+    bool space = mKeyboard ->isKeyDown(OIS::KC_SPACE);
+
+    // Handle Shooting
+    static int shooting_timer = 0;
+
+    if (shooting_timer > 0) {
+        --shooting_timer;
+    }
+
+    mHero->setTripleShot();
+    if (space) {
+        // Space is being pressed
+        if (shooting_timer == 0) {
+            if (!mHero->isTripleShot()) {
+                createHeroProjectile(mHero->pos, Vector3(1, 0,0), Degree(0));
+            } else {
+                createHeroProjectile(mHero->pos, Vector3(1, 0,0), Degree(0));
+                createHeroProjectile(mHero->pos, Vector3(1.732,1,0), Degree(-30));
+                createHeroProjectile(mHero->pos, Vector3(1.732,-1,0), Degree(30));
+            }
+
+            // Now Set the next shot up
+            shooting_timer = mHero -> getShotRate();
+        }
+    }
 
     Vector3 next_direction = Vector3::ZERO;
     if(up || down || left || right)
@@ -194,17 +400,6 @@ bool MainApplication::processUnbufferedInput(const Ogre::FrameEvent & evt)
     mHero -> dir = next_direction;
     mHero -> rotatePitch(mSceneMgr);
 
-
-    // Make Hero Projectiles Move
-    for (int i=0; i<mHeroProjectiles.size(); ++i) {
-        mHeroProjectiles[i] -> move(mSceneMgr, mQuery, mCamera);
-    }
-
-    // Do Enemy Stuff
-    processEnemy();
-
-    collisionDetection();
-
     return true;
 }
 
@@ -215,6 +410,7 @@ bool MainApplication::keyPressed( const OIS::KeyEvent& evt) {
             break;
         case OIS::KC_SPACE:
             {
+                /*
                 static int player_bullet_num = 0;
                 // It's a bullet hell.
                 char buffer[256];
@@ -234,6 +430,7 @@ bool MainApplication::keyPressed( const OIS::KeyEvent& evt) {
                 // TODO rotating the bullet
                 mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> yaw(Degree(90));
                 mSceneMgr -> getSceneNode(newHeroProjectile -> entity_name + "Node") -> scale(0.5, 0.5, 0.5);
+                */
             }
             break;
         deafult:
@@ -251,7 +448,23 @@ bool MainApplication::frameRenderingQueued(const Ogre::FrameEvent & evt)
     bool ret = BaseApplication::frameRenderingQueued(evt);
 
     if(!processUnbufferedInput(evt)) return false;
+    
+    // Make Hero Projectiles Move
+    for (int i=0; i<mHeroProjectiles.size(); ++i) {
+        mHeroProjectiles[i] -> move(mSceneMgr, mQuery, mCamera, mHero->getProjectileSpeed());
+    }
 
+    // Do Enemy Stuff
+    processEnemy();
+
+    collisionDetectionProjectile();
+    collisionDetectionPlayerEnemy(); 
+    cleanUpProjectiles();
+    cleanUpEnemies();
+    if(mHero -> isDead())
+    {
+        reset();
+    }
     return ret;
 }
 
@@ -277,3 +490,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+

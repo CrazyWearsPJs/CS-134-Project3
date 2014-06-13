@@ -4,12 +4,16 @@
 #include "BaseApplication.h"
 #include <vector>
 #include <string>
+
+using namespace Ogre;
+
 class GameEntity {
 
 	public:
 		Ogre::String entity_name;
 		Ogre::Vector3 pos;
 		Ogre::Vector3 dir;
+        Ogre::Vector3 vel;
 
 		virtual std::vector<Ogre::String> collision(Ogre::RaySceneQuery * query) = 0;
 
@@ -19,7 +23,8 @@ class GameEntity {
 			:entity_name(entity_name), pos(inital_pos), dir(inital_dir)
 		{}
 
-		virtual void move(Ogre::SceneManager *, Ogre::RaySceneQuery *, Ogre::Camera *) = 0;
+		virtual void move(Ogre::SceneManager *, Ogre::RaySceneQuery *, Ogre::Camera *)
+        {}
 
 		virtual ~GameEntity()
 		{}

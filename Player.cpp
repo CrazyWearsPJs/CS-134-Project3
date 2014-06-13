@@ -6,9 +6,49 @@ using namespace Ogre;
 
 Player::Player(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
 					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
-			:GameEntity(entity_name, inital_pos, inital_dir)
+			:GameEntity(entity_name, inital_pos, inital_dir), alive(true)
 {
     pitch = 0;
+    shot_rate = default_shot_rate;
+    projectile_speed = default_projectile_speed;
+    triple_shot = false;
+}
+
+void Player::collectCoin() {
+    ++coins_collected;
+}
+
+int Player::getCoins() {
+    return coins_collected;
+}
+
+void Player::setTripleShot() {
+    triple_shot = true;
+}
+
+bool Player::isTripleShot() {
+    return triple_shot;
+}
+
+int Player::getShotRate() {
+    return shot_rate;
+}
+
+void Player::setShotRate(int rate = default_shot_rate) {
+    shot_rate = rate;
+}
+
+double Player::getProjectileSpeed() {
+    return projectile_speed;
+}
+
+void Player::setProjectileSpeed(double speed = default_projectile_speed) {
+    projectile_speed = speed;
+}
+
+void Player::getShot()
+{
+    alive = false;
 }
 
 Projectile * Player::fireProjectile(Ogre::SceneManager * manager)
@@ -27,6 +67,11 @@ void Player::moveTo(Vector3 pos, SceneManager * manager)
 {
     this -> pos = pos;
     manager -> getSceneNode(this -> entity_name + "Node") -> setPosition(pos);
+}
+
+bool Player::isDead()
+{
+    return !alive;
 }
 
 void Player::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * query, Ogre::Camera * camera)

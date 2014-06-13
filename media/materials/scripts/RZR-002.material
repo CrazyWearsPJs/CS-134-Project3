@@ -20,6 +20,28 @@ material Test/SpaceShipCustom
     }
 }
 
+material Test/SpaceShipInvincible
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.35 0.35 0.35
+            diffuse 0.1 0.1 0.1
+            emissive 0 0 0
+            specular 0 0 0 0
+
+            texture_unit
+            {
+                texture spaceship2.jpg
+                colour_op_ex add src_texture src_current
+				colour_op_multipass_fallback one one
+				env_map spherical
+            }
+        }
+    }
+}
+
 material Test/SpaceShipProjectile
 {
     technique

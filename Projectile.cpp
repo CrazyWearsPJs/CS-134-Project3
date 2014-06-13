@@ -6,7 +6,7 @@ using namespace Ogre;
 
 Projectile::Projectile(const Ogre::String & entity_name, Ogre::Vector3 inital_pos = Ogre::Vector3::ZERO,
 					Ogre::Vector3 inital_dir = Ogre::Vector3::ZERO)
-			:GameEntity(entity_name, inital_pos, inital_dir)
+			:GameEntity(entity_name, inital_pos, inital_dir), is_used(false)
 {
 	++Projectile::id;
 }
@@ -21,12 +21,15 @@ Ogre::String Projectile::get_next_name()
 }
 
 
-void Projectile::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * RaySceneQuery, Ogre::Camera * camera)
+void Projectile::move(Ogre::SceneManager * manager, Ogre::RaySceneQuery * RaySceneQuery, Ogre::Camera * camera, double player_projectile_speed)
 {
-    Vector3 newPos = this -> pos + Vector3(3, 0, 0);
+    this->dir.normalise();
+    Vector3 newPos = this -> pos + (this -> dir * player_projectile_speed);
+    //Vector3 newPos = this -> pos + Vector3(player_projectile_speed, 0, 0);
     this -> pos = newPos;
     manager -> getSceneNode(this -> entity_name + "Node") -> setPosition(newPos);
-	return;
+	if(this -> pos.x > 60) is_used = true;
+    return;
 }
 
 std::vector<Ogre::String> Projectile::collision(Ogre::RaySceneQuery *)

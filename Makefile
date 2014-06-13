@@ -18,15 +18,17 @@ MAIN_OUT = a.out
 BASE_APPLICATION_OUT = BaseApplication.o
 PLAYER_OUT = Player.o
 ENEMY_OUT = Enemy.o
+ITEM_OUT = Item.o
 PROJECTILE_OUT = Projectile.o
 
 ## Requirements for each command
-MAIN_REQS = MainApplication.cpp $(BASE_APPLICATION_OUT) $(PROJECTILE_OUT) $(PLAYER_OUT) $(ENEMY_OUT)
-BASE_APPLICATION_REQS = BaseApplication.cpp
-PLAYER_REQS = GameEntity.h $(PROJECTILE_OUT) Player.cpp
-ENEMY_REQS = GameEntity.h $(PROJECTILE_OUT) Enemy.cpp
-ITEM_REQS = GameEntity.h Item.cpp
-PROJECTILE_REQS = GameEntity.h Projectile.cpp
+MAIN_REQS = MainApplication.cpp $(BASE_APPLICATION_OUT) $(PROJECTILE_OUT) $(PLAYER_OUT) $(ENEMY_OUT) $(ITEM_OUT)
+BASE_APPLICATION_REQS = BaseApplication.h BaseApplication.cpp
+PLAYER_REQS = GameEntity.h $(PROJECTILE_OUT) Player.h Player.cpp
+ENEMY_REQS = GameEntity.h $(PROJECTILE_OUT) Enemy.h Enemy.cpp
+ITEM_REQS = GameEntity.h Item.h Item.cpp
+PROJECTILE_REQS = GameEntity.h Projectile.h Projectile.cpp
+
 
 ## Targets to compile for each command
 MAIN_TARGETS = MainApplication.cpp $(BASE_APPLICATION_OUT) $(PROJECTILE_OUT) $(PLAYER_OUT) $(ENEMY_OUT)
@@ -49,5 +51,7 @@ $(ENEMY_OUT): $(ENEMY_REQS) $(INCLUDE)
 	$(CC) -c $(INCLUDE_PATHS) $(ENEMY_TARGETS) -o $(ENEMY_OUT)
 $(PROJECTILE_OUT): $(PROJECTILE_REQS) $(INCLUDE)
 	$(CC) -c $(INCLUDE_PATHS) $(PROJECTILE_TARGETS) -o $(PROJECTILE_OUT)
+$(ITEM_OUT): $(ITEM_REQS) $(INCLUDE)
+	$(CC) -c $(INCLUDE_PATHS) $(ITEM_TARGETS) -o $(ITEM_OUT)
 clean:
 	rm -f *~ *.o *.out

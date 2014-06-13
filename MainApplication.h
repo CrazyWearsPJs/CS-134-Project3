@@ -34,6 +34,10 @@ public:
 
 protected:
 
+
+    long long timer;
+
+
     virtual void createScene(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent &);
     virtual bool processUnbufferedInput(const Ogre::FrameEvent &);
@@ -51,9 +55,28 @@ protected:
     Ogre::RaySceneQuery * mQuery;
 
     void processEnemy();
-    void spawnEnemy(Vector3);
+    void spawnEnemy(Vector3, Vector3, Vector3, enemy_type);
 
-    void collisionDetection();
+    void setupPlayer();
+
+    void destroyEntities();
+
+    void reset();
+
+    void collisionDetectionProjectile();
+   
+    void collisionDetectionPlayerEnemyHelper(Vector3 rayPos);
+
+    void collisionDetectionPlayerEnemy();
+
+    void cleanUpProjectiles();
+
+    void cleanUpEnemies();
+
+    void destroyGameEntity(GameEntity *);
+
+    void createHeroProjectile(Vector3, Vector3, Degree);
+
 
     Player * mHero;
 
